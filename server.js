@@ -270,6 +270,10 @@ app.get('/api/laporan', verifyToken, (req, res) => {
   });
 });
 
+app.get('/', (req, res) => {
+  res.send('API GEO PATROL RUNNING');
+});
+
 // ==========================
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
