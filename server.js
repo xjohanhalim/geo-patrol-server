@@ -20,7 +20,7 @@ const FRONTEND_URL = process.env.FRONTEND_URL || "https://geo-patrol-server-prod
 // CORS
 // ==========================
 app.use(cors({
-  origin: FRONTEND_URL,
+  origin: FRONTEND_URL, "http://localhost:8100",
   methods: ['GET', 'POST']
 }));
 
