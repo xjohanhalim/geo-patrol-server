@@ -8,6 +8,8 @@ const path = require('path');
 const fs = require('fs');
 
 const app = express();
+app.use(cors());
+app.use(express.json());
 const PORT = process.env.PORT || 3000;
 
 // ==========================
@@ -15,18 +17,6 @@ const PORT = process.env.PORT || 3000;
 // ==========================
 const SECRET_KEY = process.env.JWT_SECRET || "kunci_rahasia_akses";
 const FRONTEND_URL = process.env.FRONTEND_URL || "https://geo-patrol-server-production.up.railway.app";
-
-// ==========================
-// CORS
-// ==========================
-app.use(cors({
-  origin: [
-    FRONTEND_URL,
-    "http://localhost:8100"
-  ],
-  methods: ['GET', 'POST']
-}));
-app.use(express.json());
 
 // ==========================
 // STATIC FOLDER
