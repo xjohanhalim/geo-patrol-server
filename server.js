@@ -8,7 +8,7 @@ const path = require('path');
 const fs = require('fs');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 // ==========================
 // SECURITY CONFIG
@@ -16,7 +16,7 @@ const PORT = 3000;
 const SECRET_KEY = "kunci_rahasia_akses";
 
 app.use(cors({
-  origin: 'http://192.168.1.9:8100',
+  origin: 'http://dana-api-production.up.railway.app:8100',
   methods: ['GET', 'POST'],
 }));
 
@@ -31,10 +31,11 @@ app.use('/uploads', express.static('uploads'));
 // KONEKSI DATABASE
 // ==========================
 const db = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: '',
-  database: 'db_kampus'
+  host: process.env.MYSQLHOST,
+  user: process.env.MYSQLUSER,
+  password: process.env.MYSQLPASSWORD,
+  database: process.env.MYSQLDATABASE,
+  port: process.env.MYSQLPORT
 });
 
 db.connect(err => {
