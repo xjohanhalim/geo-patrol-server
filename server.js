@@ -7,19 +7,21 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-require('dotenv').config();
-
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // ==========================
-// SECURITY CONFIG
+// ENV CONFIG
 // ==========================
-const SECRET_KEY = "kunci_rahasia_akses";
+const SECRET_KEY = process.env.JWT_SECRET || "kunci_rahasia_akses";
+const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:8100";
 
+// ==========================
+// CORS
+// ==========================
 app.use(cors({
-  origin: 'http://dana-api-production.up.railway.app:8100',
-  methods: ['GET', 'POST'],
+  origin: FRONTEND_URL,
+  methods: ['GET', 'POST']
 }));
 
 app.use(express.json());
@@ -27,7 +29,13 @@ app.use(express.json());
 // ==========================
 // STATIC FOLDER (AKSES FOTO)
 // ==========================
-app.use('/uploads', express.static('uploads'));
+const uploadDir = path.join(__dirname, 'uploads');
+
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir);
+}
+
+app.use('/uploads', express.static(uploadDir));
 
 // ==========================
 // KONEKSI DATABASE
@@ -53,13 +61,6 @@ db.connect(err => {
 // ==========================
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-
-    const uploadDir = './uploads';
-
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir);
-    }
-
     cb(null, uploadDir);
   },
 
@@ -194,7 +195,7 @@ app.post('/api/login', (req, res) => {
 });
 
 // ==========================
-// SIMPAN LAPORAN PENGIRIMAN
+// SIMPAN LAPORAN
 // ==========================
 app.post(
   '/api/laporan',
@@ -217,7 +218,7 @@ app.post(
     }
 
     const id_kurir = req.user.id;
-    const fotoPath = req.file.path;
+    const fotoPath = req.file.filename;
 
     const sql = `
       INSERT INTO laporan_pengiriman
@@ -247,33 +248,29 @@ app.post(
 // ==========================
 // HISTORY LAPORAN USER
 // ==========================
-app.get(
-  '/api/laporan',
-  verifyToken,
-  (req, res) => {
+app.get('/api/laporan', verifyToken, (req, res) => {
 
-    const id_kurir = req.user.id;
+  const id_kurir = req.user.id;
 
-    const sql = `
+  const sql = `
       SELECT * FROM laporan_pengiriman
       WHERE id_kurir = ?
       ORDER BY created_at DESC
     `;
 
-    db.query(sql, [id_kurir], (err, results) => {
+  db.query(sql, [id_kurir], (err, results) => {
 
-      if (err) {
-        return res.status(500).json({
-          error: 'Gagal ambil data'
-        });
-      }
+    if (err) {
+      return res.status(500).json({
+        error: 'Gagal ambil data'
+      });
+    }
 
-      res.json(results);
-    });
-  }
-);
+    res.json(results);
+  });
+});
 
 // ==========================
 app.listen(PORT, () => {
-  console.log(`🚀 Server jalan di http://localhost:${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });
