@@ -14,7 +14,7 @@ const PORT = process.env.PORT || 3000;
 // ENV CONFIG
 // ==========================
 const SECRET_KEY = process.env.JWT_SECRET || "kunci_rahasia_akses";
-const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:8100";
+const FRONTEND_URL = process.env.FRONTEND_URL || "http://geo-patrol-server-production.up.railway.app";
 
 // ==========================
 // CORS
