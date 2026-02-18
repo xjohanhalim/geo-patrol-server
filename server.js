@@ -98,7 +98,7 @@ app.post('/api/register', async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     await db.query(
-      'INSERT INTO users (username, password_hash) VALUES (?, ?)',
+      'INSERT INTO users (username, password) VALUES (?, ?)',
       [username, hashedPassword]
     );
 
@@ -137,7 +137,7 @@ app.post('/api/login', async (req, res) => {
 
     const user = rows[0];
 
-    const valid = await bcrypt.compare(password, user.password_hash);
+    const valid = await bcrypt.compare(password, user.password);
     if (!valid) {
       return res.status(401).json({ error: 'Password salah!' });
     }
@@ -205,26 +205,26 @@ app.get('/api/laporan', verifyToken, async (req, res) => {
 });
 
 // ==========================
-// ROOT
+// INIT DB (sementara)
 // ==========================
-app.get('/', (req, res) => {
-  res.send('API GEO PATROL RUNNING');
-});
-
 app.get('/init-db', async (req, res) => {
   try {
 
     await db.query(`
       ALTER TABLE users
-      CHANGE password_hash password VARCHAR(255)
-      );
+      CHANGE password_hash password VARCHAR(255);
     `);
 
-    res.send("Database initialized successfully 🚀");
+    res.send("Kolom password berhasil diubah 🚀");
 
   } catch (err) {
     res.status(500).send(err.message);
   }
+});
+
+// ==========================
+app.get('/', (req, res) => {
+  res.send('API GEO PATROL RUNNING');
 });
 
 // ==========================
