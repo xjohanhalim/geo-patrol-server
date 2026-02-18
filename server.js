@@ -89,7 +89,7 @@ function verifyToken(req, res, next) {
 // ==========================
 // REGISTER
 // ==========================
-app.post('/api/register', async (req, res) => {
+app.post('/register', async (req, res) => {
   const { username, password } = req.body;
 
   if (!username || !password) {
@@ -119,7 +119,7 @@ app.post('/api/register', async (req, res) => {
 // ==========================
 // LOGIN
 // ==========================
-app.post('/api/login', async (req, res) => {
+app.post('/login', async (req, res) => {
 
   const { username, password } = req.body;
 
@@ -160,7 +160,7 @@ app.post('/api/login', async (req, res) => {
 // ==========================
 // SIMPAN LAPORAN
 // ==========================
-app.post('/api/laporan', verifyToken, upload.single('foto'), async (req, res) => {
+app.post('/laporan', verifyToken, upload.single('foto'), async (req, res) => {
 
   const { no_resi, latitude, longitude } = req.body;
 
@@ -191,7 +191,7 @@ app.post('/api/laporan', verifyToken, upload.single('foto'), async (req, res) =>
 // ==========================
 // HISTORY LAPORAN
 // ==========================
-app.get('/api/laporan', verifyToken, async (req, res) => {
+app.get('/laporan', verifyToken, async (req, res) => {
   try {
     const [rows] = await db.query(`
       SELECT * FROM laporan_pengiriman
