@@ -270,6 +270,36 @@ app.get('/api/laporan', verifyToken, (req, res) => {
   });
 });
 
+app.get('/init-db', async (req, res) => {
+  try {
+    await db.query(`
+      CREATE TABLE users (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        username VARCHAR(50) UNIQUE,
+        password_hash VARCHAR(255),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
+    await db.query(`
+      CREATE TABLE laporan_pengiriman (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        id_kurir INT,
+        no_resi VARCHAR(100),
+        foto_path VARCHAR(255),
+        latitude VARCHAR(50),
+        longitude VARCHAR(50),
+        status VARCHAR(20),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
+    res.send("Database initialized successfully 🚀");
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
 app.get('/', (req, res) => {
   res.send('API GEO PATROL RUNNING');
 });
